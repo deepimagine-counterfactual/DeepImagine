@@ -31,7 +31,7 @@ cd DeepImagine
 pip install -e .
 ```
 
-Python 3.10+. The training runs reported in the paper used a single node with 7×80GB H100s and FlashAttention-4. Inference with API backbones (GPT-5, GPT-5-mini, o3-mini) just needs an API key.
+Python 3.10+. The training runs reported in the paper used a single node with 8×80GB H100s and FlashAttention-4. Inference with API backbones (GPT-5, GPT-5-mini, o3-mini) just needs an API key.
 
 ```bash
 export OPENAI_API_KEY=...   # for the API backbones and synthetic data generation
