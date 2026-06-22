@@ -1,0 +1,110 @@
+config_version: 2
+
+preset:
+  name: train_gemma
+  description: "Configuration file to train gemma-3-12b-it model for counterfactual imagining"
+
+model:
+  model_name_or_path: google/gemma-3-12b-it
+  trust_remote_code: false
+  attn_implementation: flash_attention_4
+  torch_dtype: bfloat16
+  use_lora: true
+  load_in_4bit: false
+  lora_r: 64
+  lora_alpha: 128
+  lora_dropout: 0.10
+  lora_target_modules: all-linear
+  chat_template_path: templates/gemma3_training.jinja
+
+data:
+  train_file: <path to train data (jsonl)>
+  validation_file: <path to validation data (jsonl)>
+  input_column: input
+  output_column: output
+  prompt_column: prompt
+  completion_column: completion
+  messages_column: messages
+  system_prompt:
+  validation_split_ratio: 0.02
+
+training:
+  output_dir: <path to output directory>
+  run_name: train_gemma
+  num_train_epochs: 1
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  gradient_accumulation_steps: 2
+  learning_rate: 2.0e-5
+  lr_scheduler_type: cosine_with_min_lr
+  lr_scheduler_kwargs:
+    min_lr_rate: 0.3
+  warmup_ratio: 0.0
+  warmup_steps: 640
+  weight_decay: 0.0
+  max_grad_norm: 1.0
+  max_seq_length: 8192
+  gradient_checkpointing: true
+  logging_steps: 1
+  eval_strategy: "no"
+  eval_steps: 3183
+  save_strategy: steps
+  save_steps: 3183
+  save_total_limit: 8
+  seed: 42
+  optim: adamw_torch_fused
+  ddp_find_unused_parameters: true
+  completion_only_loss: false
+  assistant_only_loss: true
+  push_to_hub: false
+  hub_model_id:
+  hub_private_repo: false
+  resume_from_checkpoint:
+
+tracking:
+  project: train_gemma
+  entity:
+  group: train_gemma
+  tags: ["gemma3-12b-it", "counterfactual-imagining", "lora", "r64", "drop10", "cosine", "min_lr03", "lr2em5", "wu640", "8xh100"]
+  notes: "Configuration file to train gemma-3-12b-it model for counterfactual imagining"
+  watch: "false"
+  log_model: "false"
+  strict: true
+  custom_metric_hooks: []
+  log_system_metrics: true
+  generation_eval_enabled: false
+  generation_eval_max_examples: 1
+  generation_eval_batch_size: 2
+  generation_eval_max_new_tokens: 4096
+  generation_eval_temperature: 0.0
+  generation_eval_top_p: 1.0
+  generation_eval_top_k:
+  generation_eval_min_p:
+  generation_eval_repetition_penalty: 1.0
+  generation_eval_output_subdir: inference
+  generation_eval_save_to_checkpoint: false
+
+runtime:
+  accelerate_config: configs/accelerate/ddp_8xh100.yaml
+  auto_resume: true
+  save_doctor_report: true
+  save_resolved_launch: true
+  benchmark_before_train: false
+  benchmark_steps: 5
+  pre_launch_doctor: true
+
+performance:
+  max_steps:
+  max_train_examples:
+  max_validation_examples: 1
+  packing: false
+  eval_packing:
+  padding_free: false
+  dataloader_num_workers: 4
+  dataloader_pin_memory: true
+  dataloader_prefetch_factor: 2
+  dataset_num_proc: 8
+  use_liger_kernel: false
+  torch_compile: false
+  cache_preflight_reports: true
+  cache_normalized_datasets: true
